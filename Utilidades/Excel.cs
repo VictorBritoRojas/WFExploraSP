@@ -1,10 +1,17 @@
-﻿using ExcelDataReader;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using NPOI.SS.UserModel;
+using NPOI.XSSF.UserModel; // Para archivos de Excel 2007 o posteriores
+// using NPOI.HSSF.UserModel; // Para archivos de Excel anteriores a 2007
+using NPOI.SS.Util;
+using System.IO;
+using NPOI.HSSF.UserModel;
+using System.Reflection.Metadata;
 
 namespace WFExploraSP.Utilidades
 {
@@ -39,147 +46,103 @@ namespace WFExploraSP.Utilidades
             get { return _rutaOrigen; }
         }
         
-        private IExcelDataReader excelReader = null;
-
-        private FileStream stream = null;
 
         #endregion
 
         #region Metodos
 
-        private void abrirExcel()
+        public List<string> listadoHojas()
         {
-            try
+            List<string> list = new List<string>();
+            // Crea un objeto FileStream del archivo
+            using (var fileStream = new FileStream(_rutaOrigen, FileMode.Open, FileAccess.Read))
             {
+                IWorkbook workbook = new HSSFWorkbook();
                 if (File.Exists(_rutaOrigen))
                 {
-
-                    stream = File.Open(_rutaOrigen, FileMode.Open, FileAccess.Read);
-
-                    switch (System.IO.Path.GetExtension(_rutaOrigen))
+                    switch (Path.GetExtension(_rutaOrigen))
                     {
                         case ".xls":
-                            excelReader = ExcelReaderFactory.CreateBinaryReader(stream);
+                            workbook = new HSSFWorkbook(fileStream); // Para archivos de Excel anteriores a 2007
                             break;
                         case ".xlsx":
-                            excelReader = ExcelReaderFactory.CreateOpenXmlReader(stream);
+                            workbook = new XSSFWorkbook(fileStream); // Para archivos de Excel 2007 o posteriores
                             break;
                         default:
                             break;
                     }
                 }
-            }
-            catch (Exception e) { }
-        }
+                
+                // Obtiene el número total de hojas de trabajo en el archivo
+                int numSheets = workbook.NumberOfSheets;
 
-        private void cerrarExcel()
-        {
-            try
-            {
-                stream = null;
-                if (excelReader != null)
+                // Itera sobre todas las hojas de trabajo del archivo y obtiene sus nombres
+                for (int i = 0; i < numSheets; i++)
                 {
-                    excelReader.Dispose();
-                    excelReader.Close();
-                    excelReader = null;
+                    string sheetName = workbook.GetSheetName(i);
+                    list.Add(sheetName);
                 }
             }
-            catch (Exception e)
-            {
-            }
-            finally
-            {
-                GC.Collect();
-            }
-        }
-
-        public List<string> listadoHojas()
-        {
-            List<string> list = new List<string>();
-            abrirExcel();
-
-            cerrarExcel();
             return list;
         }
 
         public DataTable obtenerDatos(string hoja)
         {
             DataTable tbl = new DataTable();
-            abrirExcel();
+            // Crea un objeto FileStream del archivo
+            using (var fileStream = new FileStream(_rutaOrigen, FileMode.Open, FileAccess.Read))
+            {
+                IWorkbook workbook = new HSSFWorkbook();
+                if (File.Exists(_rutaOrigen))
+                {
+                    switch (Path.GetExtension(_rutaOrigen))
+                    {
+                        case ".xls":
+                            workbook = new HSSFWorkbook(fileStream); // Para archivos de Excel anteriores a 2007
+                            break;
+                        case ".xlsx":
+                            workbook = new XSSFWorkbook(fileStream); // Para archivos de Excel 2007 o posteriores
+                            break;
+                        default:
+                            break;
+                    }
+                }
 
-            cerrarExcel();
+                ISheet worksheet = workbook.GetSheet(hoja);
+
+                // Itera sobre las filas y las columnas de la hoja de trabajo
+                for (int row = worksheet.FirstRowNum; row <= worksheet.LastRowNum; row++)
+                {
+                    IRow currentRow = worksheet.GetRow(row);
+
+                    if (row == 0)
+                    {
+                        for (int col = currentRow.FirstCellNum; col < currentRow.LastCellNum; col++)
+                        {
+                            // Obtiene el valor de la celda actual
+                            ICell currentCell = currentRow.GetCell(col);
+                            tbl.Columns.Add(currentCell == null ? "Column"+col.ToString() : currentCell.ToString());
+                        }
+                    }
+                    else {
+                        DataRow dRow = tbl.NewRow();
+                        for (int col = currentRow.FirstCellNum; col < currentRow.LastCellNum; col++)
+                        {
+                            // Obtiene el valor de la celda actual
+                            ICell currentCell = currentRow.GetCell(col);
+                            dRow[col] = currentCell == null ? "" : currentCell.ToString();
+                        }
+                        tbl.Rows.Add(dRow);
+                    }
+                }
+            }
             return tbl;
         }
 
         #endregion
 
-        //public void generarExcel(DataTable tbl)
-        //{
-        //    RowCell = 1;
+    
 
-        //    int columns = tbl.Columns.Count, rows = tbl.Rows.Count;
-        //    Msg = string.Empty;
-        //    ExcelPackage exl = new ExcelPackage();
-        //    exl.Workbook.Worksheets.Add(Hoja);
-        //    ExcelWorksheet sheet = exl.Workbook.Worksheets[1];
-
-        //    if (tbl != null)
-        //    {
-        //        ColumnCell = 1;
-        //        for (int i = 0; i < columns; i++)
-        //        {
-        //            string aa = tbl.Columns[i].ColumnName;
-        //            sheet.Cells[RowCell, ColumnCell].Value = aa;
-        //            sheet.Column(ColumnCell).AutoFit();
-        //            ColumnCell++;
-        //        }
-
-        //        RowCell++;
-
-        //        foreach (DataRow it in tbl.Rows)
-        //        {
-        //            ColumnCell = 1;
-        //            for (int a = 0; a < columns; a++)
-        //            {
-        //                string tt = it[a].ToString();
-        //                sheet.Cells[RowCell, ColumnCell].Value = tt;
-        //                ColumnCell++;
-        //            }
-
-        //            RowCell++;
-        //        }
-        //    }
-
-        //    if (!Directory.Exists(Path))
-        //    {
-        //        Directory.CreateDirectory(Path);
-        //    }
-        //    exl.SaveAs(new FileInfo(Path + Nombre + ".xlsx"));
-
-        //}
-
-        
-
-        
-
-
-        public IEnumerable<List<object>> GetRow(int columns)
-        {
-            bool flag = false;
-            while (excelReader.Read())
-            {
-                List<object> vals = new List<object>();
-                if (flag)
-                {
-                    for (int i = 0; i < columns; i++)
-                    {
-                        vals.Add(excelReader[i]);
-                    }
-                    yield return vals;
-                }
-                flag = true;
-            }
-        }
 
         
     }

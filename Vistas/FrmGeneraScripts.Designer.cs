@@ -30,40 +30,44 @@
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(FrmGeneraScripts));
             toolStrip1 = new ToolStrip();
-            toolStripButton2 = new ToolStripButton();
-            toolStripComboBox1 = new ToolStripComboBox();
+            btnCargarExcel = new ToolStripButton();
+            cbxHojas = new ToolStripComboBox();
             toolStripButton1 = new ToolStripButton();
             panel1 = new Panel();
-            dataGridView1 = new DataGridView();
-            richTextBox1 = new RichTextBox();
-            label1 = new Label();
+            splitContainer1 = new SplitContainer();
+            txtConsulta = new RichTextBox();
+            dgvHojaSelect = new DataGridView();
             toolStrip1.SuspendLayout();
             panel1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).BeginInit();
+            splitContainer1.Panel1.SuspendLayout();
+            splitContainer1.Panel2.SuspendLayout();
+            splitContainer1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvHojaSelect).BeginInit();
             SuspendLayout();
             // 
             // toolStrip1
             // 
-            toolStrip1.Items.AddRange(new ToolStripItem[] { toolStripButton2, toolStripComboBox1, toolStripButton1 });
+            toolStrip1.Items.AddRange(new ToolStripItem[] { btnCargarExcel, cbxHojas, toolStripButton1 });
             toolStrip1.Location = new Point(0, 0);
             toolStrip1.Name = "toolStrip1";
-            toolStrip1.Size = new Size(800, 25);
+            toolStrip1.Size = new Size(714, 25);
             toolStrip1.TabIndex = 0;
             toolStrip1.Text = "toolStrip1";
             // 
-            // toolStripButton2
+            // btnCargarExcel
             // 
-            toolStripButton2.DisplayStyle = ToolStripItemDisplayStyle.Text;
-            toolStripButton2.Image = (Image)resources.GetObject("toolStripButton2.Image");
-            toolStripButton2.ImageTransparentColor = Color.Magenta;
-            toolStripButton2.Name = "toolStripButton2";
-            toolStripButton2.Size = new Size(90, 22);
-            toolStripButton2.Text = "Cargar Archivo";
+            btnCargarExcel.DisplayStyle = ToolStripItemDisplayStyle.Text;
+            btnCargarExcel.Image = (Image)resources.GetObject("btnCargarExcel.Image");
+            btnCargarExcel.ImageTransparentColor = Color.Magenta;
+            btnCargarExcel.Name = "btnCargarExcel";
+            btnCargarExcel.Size = new Size(120, 22);
+            btnCargarExcel.Text = "Cargar Archivo Excel";
             // 
-            // toolStripComboBox1
+            // cbxHojas
             // 
-            toolStripComboBox1.Name = "toolStripComboBox1";
-            toolStripComboBox1.Size = new Size(121, 25);
+            cbxHojas.Name = "cbxHojas";
+            cbxHojas.Size = new Size(121, 25);
             // 
             // toolStripButton1
             // 
@@ -76,48 +80,61 @@
             // 
             // panel1
             // 
-            panel1.Controls.Add(dataGridView1);
-            panel1.Controls.Add(richTextBox1);
-            panel1.Controls.Add(label1);
+            panel1.AutoScroll = true;
+            panel1.Controls.Add(splitContainer1);
             panel1.Dock = DockStyle.Fill;
             panel1.Location = new Point(0, 25);
             panel1.Name = "panel1";
-            panel1.Size = new Size(800, 425);
+            panel1.Size = new Size(714, 425);
             panel1.TabIndex = 1;
             // 
-            // dataGridView1
+            // splitContainer1
             // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Location = new Point(12, 253);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.Size = new Size(240, 150);
-            dataGridView1.TabIndex = 2;
+            splitContainer1.Dock = DockStyle.Fill;
+            splitContainer1.Location = new Point(0, 0);
+            splitContainer1.Name = "splitContainer1";
+            splitContainer1.Orientation = Orientation.Horizontal;
             // 
-            // richTextBox1
+            // splitContainer1.Panel1
             // 
-            richTextBox1.Location = new Point(23, 31);
-            richTextBox1.Name = "richTextBox1";
-            richTextBox1.Size = new Size(100, 96);
-            richTextBox1.TabIndex = 1;
-            richTextBox1.Text = "";
+            splitContainer1.Panel1.Controls.Add(txtConsulta);
             // 
-            // label1
+            // splitContainer1.Panel2
             // 
-            label1.AutoSize = true;
-            label1.Location = new Point(572, 312);
-            label1.Name = "label1";
-            label1.Size = new Size(38, 15);
-            label1.TabIndex = 0;
-            label1.Text = "label1";
+            splitContainer1.Panel2.Controls.Add(dgvHojaSelect);
+            splitContainer1.Size = new Size(714, 425);
+            splitContainer1.SplitterDistance = 219;
+            splitContainer1.TabIndex = 0;
+            // 
+            // txtConsulta
+            // 
+            txtConsulta.Dock = DockStyle.Fill;
+            txtConsulta.Location = new Point(0, 0);
+            txtConsulta.Name = "txtConsulta";
+            txtConsulta.Size = new Size(714, 219);
+            txtConsulta.TabIndex = 0;
+            txtConsulta.Text = "";
+            txtConsulta.KeyPress += txtConsulta_KeyPress;
+            txtConsulta.KeyUp += txtConsulta_KeyUp;
+            // 
+            // dgvHojaSelect
+            // 
+            dgvHojaSelect.AllowUserToAddRows = false;
+            dgvHojaSelect.AllowUserToDeleteRows = false;
+            dgvHojaSelect.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvHojaSelect.Dock = DockStyle.Fill;
+            dgvHojaSelect.Location = new Point(0, 0);
+            dgvHojaSelect.Name = "dgvHojaSelect";
+            dgvHojaSelect.ReadOnly = true;
+            dgvHojaSelect.RowTemplate.Height = 25;
+            dgvHojaSelect.Size = new Size(714, 202);
+            dgvHojaSelect.TabIndex = 0;
             // 
             // FrmGeneraScripts
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 450);
+            ClientSize = new Size(714, 450);
             Controls.Add(panel1);
             Controls.Add(toolStrip1);
             FormBorderStyle = FormBorderStyle.None;
@@ -126,8 +143,11 @@
             toolStrip1.ResumeLayout(false);
             toolStrip1.PerformLayout();
             panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
+            splitContainer1.Panel1.ResumeLayout(false);
+            splitContainer1.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)splitContainer1).EndInit();
+            splitContainer1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvHojaSelect).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -135,12 +155,12 @@
         #endregion
 
         private ToolStrip toolStrip1;
-        private ToolStripButton toolStripButton2;
-        private ToolStripComboBox toolStripComboBox1;
+        private ToolStripButton btnCargarExcel;
+        private ToolStripComboBox cbxHojas;
         private ToolStripButton toolStripButton1;
         private Panel panel1;
-        private DataGridView dataGridView1;
-        private RichTextBox richTextBox1;
-        private Label label1;
+        private SplitContainer splitContainer1;
+        private RichTextBox txtConsulta;
+        private DataGridView dgvHojaSelect;
     }
 }
